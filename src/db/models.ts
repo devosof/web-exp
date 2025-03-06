@@ -4,7 +4,7 @@ const serviceSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   image: { type: String, required: true },
-  order: { type: Number, required: true },
+  order: { type: Number, default: 0 },
 });
 
 const caseStudySchema = new Schema({
@@ -22,7 +22,7 @@ const partnerSchema = new Schema({
   isActive: { type: Boolean, default: true, required: true },
 });
 
-const jobSchema = new Schema({
+const jobPostingSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   requirements: { type: String, required: true },
@@ -30,7 +30,7 @@ const jobSchema = new Schema({
   isActive: { type: Boolean, default: true, required: true },
 });
 
-const blogPostSchema = new Schema({
+const blogArticleSchema = new Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
   author: { type: String, required: true },
@@ -67,8 +67,8 @@ const userSchema = new Schema({
 export const Service = models.Service || model('Service', serviceSchema);
 export const CaseStudy = models.CaseStudy || model('CaseStudy', caseStudySchema);
 export const Partner = models.Partner || model('Partner', partnerSchema);
-export const Job = models.Job || model('Job', jobSchema);
-export const BlogPost = models.BlogPost || model('BlogPost', blogPostSchema);
+export const JobPosting = models.Job || model('JobPosting', jobPostingSchema);
+export const BlogArticle = models.BlogArticle || model('BlogArticle', blogArticleSchema);
 export const ContactSubmission = models.ContactSubmission || model('ContactSubmission', contactSubmissionSchema);
 export const Client = models.Client || model('Client', clientSchema);
 export const User = models.User || model('User', userSchema); 

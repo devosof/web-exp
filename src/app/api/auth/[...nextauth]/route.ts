@@ -1,63 +1,63 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 import { User } from "@/db/models";
 import connectDB from "@/db/db";
 import { ADMIN_EMAIL } from "@/config";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
   providers: [
     CredentialsProvider({
-      id: "credentials",
-      name: "credentials",
       credentials: {
-        email: {label: "Email", type: "text"},
-        password: {label: "Password", type: "password"}
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
-        async authorize(credentials: any): Promise<any> {
-          try {
-            await connectDB();
+      async authorize(credentials, req) {
+        try {
+          await connectDB();
 
-            const user = await User.findOne({
-              email: credentials.email,
-            });
+          // const User = mongoose.models.User || mongoose.model('User', userSchemaDef);
 
-            if (!user) {
-              throw new Error("Invalid credentials");
-            }
+          const user = await User.findOne({
+            email: credentials?.email,
+          });
 
-            const isPasswordMatched = await bcrypt.compare(
-              credentials.password,
-              user.password
-            );
-
-            if (!isPasswordMatched) {
-              throw new Error("Invalid credentials");
-            }
-
-            return {
-              email: user.email,
-              id: user._id.toString(),
-            };
-          } catch (error: any) {
-            console.error("Authentication error:", error);
-            throw new Error(error.message || "Authentication failed");
+          if (!user) {
+            throw new Error("Invalid credentials");
           }
 
+          const isPasswordMatched = await bcrypt.compare(
+            credentials?.password as string,
+            user.password
+          );
+
+          if (!isPasswordMatched) {
+            throw new Error("Invalid credentials");
+          }
+
+          return {
+            email: user.email,
+            id: user._id.toString(),
+          };
+        } catch (error: any) {
+          console.error("Authentication error:", error);
+          throw new Error(error.message || "Authentication failed");
+        }
       },
     }),
   ],
   callbacks: {
-    jwt: ({ token, user }) => {
+    jwt: ({ token, user }: { token: any; user: any }) => {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    session: ({ session, token }) => {
+    session: ({ session, token }: { session: any; token: any }) => {
       if (token) {
         session.user = {
           email: token.email,
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile }: { user: any; account: any; profile?: any }) {
       return true
     },
   },

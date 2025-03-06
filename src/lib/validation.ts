@@ -22,7 +22,7 @@ export const partnerSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export const jobSchema = z.object({
+export const jobPostingSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   requirements: z.string().min(10, { message: "Requirements must be at least 10 characters" }),
@@ -30,7 +30,7 @@ export const jobSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export const blogPostSchema = z.object({
+export const blogArticleSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   content: z.string().min(10, { message: "Content must be at least 10 characters" }),
   author: z.string().min(3, { message: "Author must be at least 3 characters" }),

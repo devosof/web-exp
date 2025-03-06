@@ -9,6 +9,33 @@ interface Params {
   id: string;
 }
 
+export async function GET(request: Request, { params }: { params: Params }) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await connectDB();
+    // Ensure params is properly awaited before destructuring
+    const { id } = await params;
+    const service = await Service.findById(id);
+
+    if (!service) {
+      return NextResponse.json({ message: "Service not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(service, { status: 200 });
+  } catch (error: any) {
+    console.error("Error fetching service:", error);
+    return NextResponse.json(
+      { message: "Error fetching service", error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
 
@@ -18,7 +45,8 @@ export async function PUT(request: Request, { params }: { params: Params }) {
 
   try {
     await connectDB();
-    const { id } = params;
+    // Ensure params is properly awaited before destructuring
+    const { id } = await params;
     const body = await request.json();
 
     const validatedData = serviceSchema.parse(body);
@@ -50,7 +78,8 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
   try {
     await connectDB();
-    const { id } = params;
+    // Ensure params is properly awaited before destructuring
+    const { id } = await params;
 
     const deletedService = await Service.findByIdAndDelete(id);
 
@@ -66,4 +95,4 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
       { status: 500 }
     );
   }
-} 
+}

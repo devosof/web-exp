@@ -18,7 +18,8 @@ export async function PUT(request: Request, { params }: { params: Params }) {
 
   try {
     await connectDB();
-    const { id } = params;
+    // Ensure params is properly awaited before destructuring
+    const { id } = await params;
     const body = await request.json();
 
     const validatedData = partnerSchema.parse(body);
@@ -50,7 +51,8 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
   try {
     await connectDB();
-    const { id } = params;
+    // Ensure params is properly awaited before destructuring
+    const { id } = await params;
 
     const deletedPartner = await Partner.findByIdAndDelete(id);
 
@@ -66,4 +68,4 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
       { status: 500 }
     );
   }
-} 
+}
